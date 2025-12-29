@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { updateWorkflowCronAction } from "@/lib/server/actions/workflows/update-workflow-cron";
+import { updateWorkflowCronAction } from "@/lib/server/actions/workflows/update-workflow-cron-action";
 import { useMutation } from "@tanstack/react-query";
 import { Calendar, Clock, TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";

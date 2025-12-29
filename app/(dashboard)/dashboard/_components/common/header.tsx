@@ -5,7 +5,7 @@ import { UserButton } from "@clerk/nextjs";
 
 export default function Header() {
   return (
-    <header className="bg-muted-foreground/20">
+    <header className="bg-muted-foreground/15">
       <div className="flex max-[300px]:flex-col gap-3 items-center justify-between  py-2 min-h-[50px] container">
         <div className="flex items-center gap-3">
           <SidebarTrigger

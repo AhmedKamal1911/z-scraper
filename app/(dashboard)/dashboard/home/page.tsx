@@ -59,7 +59,6 @@ async function StatsExecutionStatus({
 }: {
   selectedPeriod: Period;
 }) {
-  await waitFor(3000);
   const data = await getWorkflowExecutionStats(selectedPeriod);
 
   return <ExecutionStatusChart data={data} />;
@@ -70,7 +69,6 @@ async function PeriodCreditsUsage({
 }: {
   selectedPeriod: Period;
 }) {
-  await waitFor(3000);
   const data = await getPeriodCreditsUsage(selectedPeriod);
   return (
     <CreditsUsageChart

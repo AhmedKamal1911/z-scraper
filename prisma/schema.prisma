@@ -86,3 +86,14 @@ model Credential {
 
   @@unique([userId, name])
 }
+
+model UserTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  stripeId    String
+  description String
+  amount      Int
+  currency    String
+  date        DateTime @default(now())
+  invoiceUrl  String?
+}

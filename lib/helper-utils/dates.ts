@@ -23,3 +23,11 @@ export function periodToDateRange(period: Period) {
   const endDate = endOfMonth(new Date(period.year, period.month));
   return { startDate, endDate };
 }
+
+export function formatDate(date: Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(date);
+}

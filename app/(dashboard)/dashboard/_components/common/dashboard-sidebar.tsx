@@ -41,13 +41,13 @@ export default function DashboardSidebar({
       <SidebarHeader>
         <Logo />
       </SidebarHeader>
-      <div className="flex justify-center my-2">
-        <UserAvailableCreditsBadge />
-      </div>
+
       <SidebarContent>
         <SidebarNav routes={routes} />
       </SidebarContent>
-      <SidebarFooter>{/* <NavUser user={data.user} /> */}</SidebarFooter>
+      <SidebarFooter>
+        <UserAvailableCreditsBadge />
+      </SidebarFooter>
     </Sidebar>
   );
 }

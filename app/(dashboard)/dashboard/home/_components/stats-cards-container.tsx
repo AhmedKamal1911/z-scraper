@@ -10,7 +10,6 @@ export default async function StatsCardsContainer({
 }: {
   selectedPeriod: Period;
 }) {
-  await waitFor(4000);
   const data = await getStatsCardsData(selectedPeriod);
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">

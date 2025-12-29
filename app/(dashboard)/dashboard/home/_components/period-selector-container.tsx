@@ -8,7 +8,6 @@ export default async function PeriodSelectorContainer({
 }: {
   selectedPeriod: Period;
 }) {
-  await waitFor(3000);
   const periods = await getPeriods();
   return <PeriodSelector periods={periods} selectedPeriod={selectedPeriod} />;
 }
