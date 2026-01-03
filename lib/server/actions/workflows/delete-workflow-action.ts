@@ -4,19 +4,13 @@ import {
   isErrorType,
   isPrismaError,
 } from "@/lib/helper-utils/error-type-guards";
+import { requireAuth } from "@/lib/helper-utils/require-auth";
 import prisma from "@/lib/prisma";
-
-import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 export async function deleteWorkflowAction(workflowId: string) {
-  const { userId } = await auth();
-
-  if (!userId) {
-    throw new Error("Unauthnticated!");
-  }
-  // TODO: remove and replace with require auth fn
   try {
+    const { userId } = await requireAuth();
     await prisma.workflow.delete({
       where: {
         userId: userId,

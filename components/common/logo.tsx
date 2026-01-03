@@ -17,14 +17,14 @@ export default function Logo() {
       </div>
 
       <div className="flex capitalize font-bold">
-        <span className="text-primary">flow</span>
+        <span className="text-primary">Z</span>
         <span
           className={cn(
             "text-accent-foreground",
             (path === "/sign-up" || path === "/sign-in") && "text-black!"
           )}
         >
-          scrape
+          scraper
         </span>
       </div>
     </Link>

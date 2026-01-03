@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 import { creditsPackagesList, PackageId } from "@/lib/types/billing";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { onlineManager, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { purchaseCreditsAction } from "@/lib/server/actions/billing/purchase-credits-action";
 import { useRouter } from "next/navigation";
@@ -31,6 +31,8 @@ export default function CreditsPackages() {
   const router = useRouter();
   const mutation = useMutation({
     mutationFn: purchaseCreditsAction,
+    retry: (failureCount) => failureCount < 2,
+    networkMode: "always",
     onSuccess: (sessionUrl) => {
       router.push(sessionUrl);
       toast.success("Checkout session created successfully!", {
@@ -125,6 +127,12 @@ export default function CreditsPackages() {
           className="cursor-pointer"
           disabled={mutation.isPending}
           onClick={() => {
+            if (!onlineManager.isOnline()) {
+              toast.error("Check network connection", {
+                id: "purchase-credits",
+              });
+              return;
+            }
             toast.loading("Redirecting you to secure checkout…", {
               id: "purchase-credits",
             });

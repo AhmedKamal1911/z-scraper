@@ -1,7 +1,7 @@
 import useExecutionPlan from "@/hooks/use-execution-plan";
 import { Button } from "@/components/ui/button";
 import { PlayCircle } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
+import { onlineManager, useMutation } from "@tanstack/react-query";
 import { executeWorkflowAction } from "@/lib/server/actions/workflows/execute-workflow-action";
 import { toast } from "sonner";
 import { useEdges, useNodes } from "@xyflow/react";
@@ -20,14 +20,14 @@ export default function ExecuteWorkflowBtn({
   const flowDefinition = JSON.stringify({ nodes, edges });
   const mutation = useMutation({
     mutationFn: executeWorkflowAction,
+    retry: (failureCount) => failureCount < 2,
+    networkMode: "always",
     onSuccess: (executionId) => {
       toast.success("Execution is Running", { id: "flow-execution" });
-      console.log({ executionId });
       router.replace(`/dashboard/workflow/runs/${workflowId}/${executionId}`);
     },
     onError: (error) => {
       toast.error(error.message, { id: "flow-execution" });
-      // TODO: handle the network error here
     },
   });
   return (
@@ -36,6 +36,10 @@ export default function ExecuteWorkflowBtn({
       className=" capitalize"
       disabled={mutation.isPending}
       onClick={() => {
+        if (!onlineManager.isOnline()) {
+          toast.error("Check network connection", { id: workflowId });
+          return;
+        }
         const { executionPlan, error } = generateWorkflowPlan();
         if (error) {
           const hasMissingInputs = Array.isArray(error.invalidElements);

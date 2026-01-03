@@ -1,4 +1,3 @@
-import { waitFor } from "@/lib/helper-utils/wait-for";
 import Link from "next/link";
 
 export default async function LandingPage() {

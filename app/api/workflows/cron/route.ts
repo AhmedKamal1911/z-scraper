@@ -1,9 +1,9 @@
 import { getPublicUrl } from "@/lib/helper-utils/get-public-url";
 import prisma from "@/lib/prisma";
 import { WorkflowStatus } from "@/lib/types/workflow";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const now = new Date();
 
   const workflows = await prisma.workflow.findMany({

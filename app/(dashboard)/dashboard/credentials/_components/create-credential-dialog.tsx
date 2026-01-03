@@ -22,7 +22,7 @@ import { useCallback, useState } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useMutation } from "@tanstack/react-query";
+import { onlineManager, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { createCredentialAction } from "@/lib/server/actions/credentials/create-credential-action";
@@ -46,6 +46,8 @@ export default function CreateCredentialDialog({ buttonText }: Props) {
 
   const { mutate, isPending } = useMutation({
     mutationFn: createCredentialAction,
+    retry: (failureCount) => failureCount < 2,
+    networkMode: "always",
     onSuccess: () => {
       toast.success("Credential created successfully", {
         id: "create-credential",
@@ -60,6 +62,10 @@ export default function CreateCredentialDialog({ buttonText }: Props) {
 
   const onSubmit = useCallback(
     (values: CredentialsInputs) => {
+      if (!onlineManager.isOnline()) {
+        toast.error("Check network connection", { id: "create-credential" });
+        return;
+      }
       toast.loading("Creating credential...", { id: "create-credential" });
       mutate(values);
     },

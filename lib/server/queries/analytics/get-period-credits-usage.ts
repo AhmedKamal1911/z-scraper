@@ -7,10 +7,7 @@ import {
 import { requireAuth } from "@/lib/helper-utils/require-auth";
 import prisma from "@/lib/prisma";
 import { Period } from "@/lib/types/analytics";
-import {
-  ExecutionPhaseStatus,
-  WorkflowExecutionStatus,
-} from "@/lib/types/workflow";
+import { ExecutionPhaseStatus } from "@/lib/types/workflow";
 
 import { eachDayOfInterval, format } from "date-fns";
 const dateFormat = "yyyy-MM-dd";

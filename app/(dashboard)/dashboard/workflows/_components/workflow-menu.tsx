@@ -9,11 +9,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import TooltipWrapper from "@/components/common/tooltip-wrapper";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Play, ShuffleIcon, Trash } from "lucide-react";
+import { Copy, MoreVertical, Play, ShuffleIcon, Trash } from "lucide-react";
 import Link from "next/link";
 import { Workflow } from "@prisma/client";
 import { Dispatch, SetStateAction } from "react";
 import { useRunWorkflow } from "@/hooks/use-run-workflow";
+import { useDuplicateWorkflow } from "@/hooks/use-duplicate-workflow";
+import DuplicateWorkflowDialog from "./dialogs/duplicate-workflow-dialog";
 
 export default function WorkflowMenu({
   workflow,
@@ -23,7 +25,10 @@ export default function WorkflowMenu({
   setOpenDeleteDialog: Dispatch<SetStateAction<boolean>>;
 }) {
   const { runWorkflow, isRunning } = useRunWorkflow(workflow.id);
-  // TODO:add duplicate workflow btn to menu
+
+  const { form, isPending, onSubmit, open, setOpen } = useDuplicateWorkflow(
+    workflow.id
+  );
   return (
     <DropdownMenu>
       <TooltipWrapper content="Workflow Actions">
@@ -43,7 +48,7 @@ export default function WorkflowMenu({
           <DropdownMenuItem
             disabled={isRunning}
             onClick={runWorkflow}
-            className={`min-[890px]:hidden`}
+            className={`min-[960px]:hidden`}
             asChild
           >
             <div role="button" className={"flex items-center gap-2 capitalize"}>
@@ -51,7 +56,7 @@ export default function WorkflowMenu({
               run
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem className={`min-[890px]:hidden`} asChild>
+          <DropdownMenuItem className={`min-[960px]:hidden`} asChild>
             <Link
               className={"flex items-center gap-2 capitalize"}
               href={`/dashboard/workflow/editor/${workflow.id}`}
@@ -60,7 +65,24 @@ export default function WorkflowMenu({
               edit
             </Link>
           </DropdownMenuItem>
-
+          <DropdownMenuItem
+            className="min-[960px]:hidden"
+            onSelect={(e) => {
+              e.preventDefault();
+              setOpen(true);
+            }}
+          >
+            <Copy size={16} />
+            duplicate
+          </DropdownMenuItem>
+          <DuplicateWorkflowDialog
+            form={form}
+            isPending={isPending}
+            onSubmit={onSubmit}
+            open={open}
+            setOpen={setOpen}
+            hidden
+          />
           <DropdownMenuItem
             variant="destructive"
             onSelect={() => {

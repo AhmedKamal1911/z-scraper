@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function NotfoundPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground px-4">
-      <h1 className="text-[6rem] font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent select-none">
+      <h1 className="text-[6rem] font-bold bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent select-none">
         404
       </h1>
 
@@ -15,11 +15,11 @@ export default function NotfoundPage() {
 
       <Button className="mt-8 px-6 py-2 text-base rounded-lg shadow-md hover:shadow-lg transition-all">
         <ArrowLeft />
-        <Link href="/dashboard">Go back home</Link>
+        <Link href="/dashboard/home">Go back home</Link>
       </Button>
 
       <div className="absolute bottom-6 text-sm text-muted-foreground/70">
-        © {new Date().getFullYear()} FlowScrape
+        © {new Date().getFullYear()} ZScraper
       </div>
     </div>
   );

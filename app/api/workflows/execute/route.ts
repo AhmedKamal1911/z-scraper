@@ -17,6 +17,7 @@ function isValidSecret(secret: string) {
   try {
     return timingSafeEqual(Buffer.from(secret), Buffer.from(SECRET));
   } catch (error) {
+    console.error(error);
     return false;
   }
 }
@@ -24,7 +25,6 @@ function isValidSecret(secret: string) {
 export async function GET(req: NextRequest) {
   try {
     const authHeader = req.headers.get("authorization");
-    console.log(authHeader, process.env.TRIGGER_WORKFLOW_KEY_SECRET);
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json(
         { error: "Missing or invalid authorization header" },

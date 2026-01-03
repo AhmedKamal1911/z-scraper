@@ -1,7 +1,7 @@
 "use client";
 import { Workflow } from "@prisma/client";
 import { useState } from "react";
-import DeleteWorkflowDialog from "./delete-workflow-dialog";
+import DeleteWorkflowDialog from "./dialogs/delete-workflow-dialog";
 import WorkflowMenu from "./workflow-menu";
 
 export default function WorkflowOptions({ workflow }: { workflow: Workflow }) {
@@ -14,6 +14,7 @@ export default function WorkflowOptions({ workflow }: { workflow: Workflow }) {
         open={openDeleteDialog}
         setOpen={setOpenDeleteDialog}
       />
+
       <WorkflowMenu
         workflow={workflow}
         setOpenDeleteDialog={setOpenDeleteDialog}

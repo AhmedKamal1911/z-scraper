@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { deleteCredentialAction } from "@/lib/server/actions/credentials/delete-credential-action";
 
-import { useMutation } from "@tanstack/react-query";
+import { onlineManager, useMutation } from "@tanstack/react-query";
 import { Trash } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -28,6 +28,8 @@ export default function DeleteCredentialDialog({ credentialName }: Props) {
   const [confirmText, setConfirmText] = useState("");
   const deleteMutation = useMutation({
     mutationFn: deleteCredentialAction,
+    retry: (failureCount) => failureCount < 2,
+    networkMode: "always",
     onSuccess: () => {
       toast.success("Credential Deleted Successfully", { id: credentialName });
       setConfirmText("");
@@ -82,6 +84,10 @@ export default function DeleteCredentialDialog({ credentialName }: Props) {
             }
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             onClick={() => {
+              if (!onlineManager.isOnline()) {
+                toast.error("Check network connection", { id: credentialName });
+                return;
+              }
               toast.loading("Deleting credential...", { id: credentialName });
               deleteMutation.mutate(credentialName);
             }}

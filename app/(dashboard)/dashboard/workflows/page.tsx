@@ -3,7 +3,7 @@ import PageHeader from "../_components/common/page-header";
 
 import UserWorkflowsSkeleton from "./_components/user-workflows-skeleton";
 import UserWorkflows from "./_components/user-workflows";
-import CreateWorkflowDialog from "./_components/create-workflow-dialog";
+import CreateWorkflowDialog from "./_components/dialogs/create-workflow-dialog";
 
 export default function WorkFlowsPage() {
   return (

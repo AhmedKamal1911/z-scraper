@@ -82,7 +82,7 @@ export function flowToExecutionPlan(
         if (incomers.every((incomer) => planned.has(incomer.id))) {
           // here we are checking if any if all these incomers are planned and there are their inputs still invalid
           // it means that this specific node has an invalid input which means the workflow is invalid
-          console.error("invalid inputs", currentNode.id, invalidInputs);
+
           invalidInputsErrors.push({
             nodeId: currentNode.id,
             inputs: invalidInputs,
@@ -98,12 +98,10 @@ export function flowToExecutionPlan(
     for (const node of nextPhase.nodes) {
       planned.add(node.id);
     }
-    // nextPhase.nodes.map((node) => );
 
     executionPlan.push(nextPhase);
   }
   if (invalidInputsErrors.length > 0) {
-    console.log({ invalidInputsErrors });
     return {
       executionPlan: null,
       error: {

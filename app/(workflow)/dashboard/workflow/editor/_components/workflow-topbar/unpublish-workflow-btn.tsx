@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
+import { Archive } from "lucide-react";
+import { onlineManager, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { unpublishWorkflowAction } from "@/lib/server/actions/workflows/unpublish-workflow-action";
 
@@ -11,14 +11,19 @@ export default function UnPublishWorkflowBtn({
 }) {
   const mutation = useMutation({
     mutationFn: unpublishWorkflowAction,
+    retry: (failureCount) => failureCount < 2,
+    networkMode: "always",
+
     onSuccess: () => {
       toast.success("Workflow UnPublished Successfully", {
         id: workflowId,
       });
     },
+
     onError: (error) => {
-      toast.error(error.message, { id: workflowId });
-      // TODO: handle the network error here
+      toast.error(error.message, {
+        id: workflowId,
+      });
     },
   });
   return (
@@ -27,6 +32,10 @@ export default function UnPublishWorkflowBtn({
       className=" capitalize"
       disabled={mutation.isPending}
       onClick={() => {
+        if (!onlineManager.isOnline()) {
+          toast.error("Check network connection", { id: workflowId });
+          return;
+        }
         toast.loading("UnPublishing Workflow...", {
           id: workflowId,
         });
@@ -35,7 +44,7 @@ export default function UnPublishWorkflowBtn({
         });
       }}
     >
-      <Download className="text-destructive" />
+      <Archive className="text-destructive" />
       {mutation.isPending ? "unpublishing..." : "unpublish"}
     </Button>
   );

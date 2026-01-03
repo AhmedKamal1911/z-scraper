@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/empty";
 
 import { EqualApproximately } from "lucide-react";
-import CreateWorkflowDialog from "./create-workflow-dialog";
+import CreateWorkflowDialog from "./dialogs/create-workflow-dialog";
 
 import WorkflowCard from "./workflow-card";
 import { getUserWorkflowsUsecase } from "@/lib/dal";
@@ -32,7 +32,6 @@ export default async function UserWorkflows() {
       ))}
     </div>
   );
-  // TODO: Create error.tsx
 }
 
 function EmptyData() {

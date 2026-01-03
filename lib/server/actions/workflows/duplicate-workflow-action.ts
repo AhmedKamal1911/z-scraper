@@ -25,10 +25,15 @@ export async function duplicateWorkflowAction(inputs: DuplicateWorkflowInputs) {
     if (!sourceWorkflow) {
       throw new Error("Workflow Not Found");
     }
-    console.log({ old: sourceWorkflow.name, new: data.name });
-    if (sourceWorkflow.name === data.name) {
+    const workflowWithSameName = await prisma.workflow.findFirst({
+      where: {
+        name: data.name,
+      },
+    });
+    if (sourceWorkflow.name === data.name || workflowWithSameName) {
       throw new Error(`Workflow with name "${data.name}" already exists.`);
     }
+
     await prisma.workflow.create({
       data: {
         userId: sourceWorkflow.userId,

@@ -6,7 +6,6 @@ import {
 } from "@/lib/helper-utils/error-type-guards";
 import { requireAuth } from "@/lib/helper-utils/require-auth";
 import prisma from "@/lib/prisma";
-
 export async function setupUserAction() {
   try {
     const session = await requireAuth();

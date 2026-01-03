@@ -156,11 +156,13 @@ function Sidebar({
   variant = "sidebar",
   collapsible = "offcanvas",
   className,
+  desktopClassName,
   children,
   ...props
 }: React.ComponentProps<"div"> & {
   side?: "left" | "right";
   variant?: "sidebar" | "floating" | "inset";
+  desktopClassName?: string;
   collapsible?: "offcanvas" | "icon" | "none";
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
@@ -207,7 +209,10 @@ function Sidebar({
 
   return (
     <div
-      className="group peer text-sidebar-foreground hidden md:block"
+      className={cn(
+        "group peer text-sidebar-foreground hidden md:block",
+        desktopClassName
+      )}
       data-state={state}
       data-collapsible={state === "collapsed" ? collapsible : ""}
       data-variant={variant}

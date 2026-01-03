@@ -27,7 +27,7 @@ import { toast } from "sonner";
 import { TaskRegistry } from "@/lib/workflow/task/task-registry";
 import { Workflow } from "@prisma/client";
 const nodeTypes = {
-  FlowScrapeNode: CustomNodeComponent,
+  ZScraperNode: CustomNodeComponent,
 };
 const edgeTypes = {
   default: DeletableEdge,
@@ -38,7 +38,6 @@ export default function FlowEditor({ workflow }: { workflow: Workflow }) {
   const workflowParsed = useMemo(() => {
     const definition: WorkflowDefinition = JSON.parse(workflow.definition);
     return definition;
-    // TODO:create tojson and build with trycatch and also make zod schema
   }, [workflow.definition]);
   const [nodes, setNodes, onNodesChange] = useNodesState<FlowNode>(
     workflowParsed.nodes ?? []
@@ -90,11 +89,10 @@ export default function FlowEditor({ workflow }: { workflow: Workflow }) {
       const node = nodes.find((n) => n.id === connection.target);
       if (!node) return;
       const nodeInputs = node.data.inputs;
-      console.log({ nodeInputs });
+
       updateNodeData(node.id, {
         inputs: { ...nodeInputs, [connection.targetHandle]: "" },
       });
-      console.log({ nodeInputs });
     },
     [nodes, setEdges, updateNodeData]
   );
@@ -117,7 +115,7 @@ export default function FlowEditor({ workflow }: { workflow: Workflow }) {
         (out) => out.name === sourceHandle
       );
       const input = taskTarget.inputs.find((inp) => inp.name === targetHandle);
-      console.log({ input, output });
+
       if (input?.type !== output?.type) {
         console.error(
           "invalid connection : the input and the output aren't the same"
@@ -167,7 +165,6 @@ export default function FlowEditor({ workflow }: { workflow: Workflow }) {
         variant={BackgroundVariant.Lines}
         gap={12}
         size={1}
-        // className="bg-secondary!"
         color="var(--sidebar-accent)"
       />
 

@@ -39,7 +39,6 @@ export default function useExecutionPlan() {
       edges
     );
     if (error) {
-      console.log({ error });
       handleError(error);
       return { executionPlan: null, error };
     }

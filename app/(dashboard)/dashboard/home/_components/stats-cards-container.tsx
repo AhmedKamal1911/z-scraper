@@ -3,7 +3,6 @@ import { Period } from "@/lib/types/analytics";
 import StatsCard from "./stats-card";
 import { CirclePlay, Coins, Waypoints } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { waitFor } from "@/lib/helper-utils/wait-for";
 
 export default async function StatsCardsContainer({
   selectedPeriod,

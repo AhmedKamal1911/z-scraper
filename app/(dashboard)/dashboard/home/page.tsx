@@ -8,7 +8,6 @@ import StatsCardsContainer, {
 } from "./_components/stats-cards-container";
 
 import { getWorkflowExecutionStats } from "@/lib/server/queries/analytics/get-workflow-execution-stats";
-import { waitFor } from "@/lib/helper-utils/wait-for";
 
 import ExecutionStatusChart from "./_components/charts/execution-status-chart";
 

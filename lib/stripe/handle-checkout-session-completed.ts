@@ -28,8 +28,6 @@ export async function handleCheckoutSessionCompleted(
     update: { credits: { increment: purchasePackage.credits } },
   });
 
-  console.log("after upsert userbalance");
-
   const transaction = await prisma.userTransaction.create({
     data: {
       userId,
@@ -39,7 +37,7 @@ export async function handleCheckoutSessionCompleted(
       description: `${purchasePackage.name} - ${purchasePackage.credits} credits`,
     },
   });
-  console.log("after transaction create");
+
   if (event.invoice && typeof event.invoice === "string") {
     const invoice = await stripe.invoices.retrieve(event.invoice);
     const invoiceUrl = invoice.hosted_invoice_url || null;
@@ -49,7 +47,6 @@ export async function handleCheckoutSessionCompleted(
         where: { id: transaction.id },
         data: { invoiceUrl },
       });
-      console.log("after update user transaction");
     }
   }
 }

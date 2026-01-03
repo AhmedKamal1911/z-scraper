@@ -14,9 +14,9 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { getWorkflowExecutionStats } from "@/lib/server/queries/analytics/get-workflow-execution-stats";
-import { ChartColumnIncreasing, Workflow } from "lucide-react";
+import { ChartColumnIncreasing } from "lucide-react";
 import React from "react";
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 type Props = {
   data: Awaited<ReturnType<typeof getWorkflowExecutionStats>>;

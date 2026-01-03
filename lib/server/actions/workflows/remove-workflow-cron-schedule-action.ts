@@ -39,7 +39,6 @@ export async function removeWorkflowCronScheduleAction({
       throw new Error("Failed to remove schedule. Please try again.");
     }
     if (isErrorType(error)) {
-      console.log(error);
       throw new Error(error.message);
     }
 

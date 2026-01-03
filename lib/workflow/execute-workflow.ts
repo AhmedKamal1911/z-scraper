@@ -183,9 +183,6 @@ async function executeWorkflowPhase({
   });
 
   const creditsRequired = TaskRegistry[node.data.type].credits;
-  console.log(
-    `executing phase ${phase.id} with ${creditsRequired} credits required`
-  );
 
   let success = await decrementCredits({
     logCollector,
@@ -196,7 +193,6 @@ async function executeWorkflowPhase({
   if (success) {
     success = await executePhase({
       node,
-      phase,
       environment,
       logCollector,
     });
@@ -214,17 +210,14 @@ async function executeWorkflowPhase({
 async function executePhase({
   environment,
   node,
-  phase,
   logCollector,
 }: {
   node: FlowNode;
-  phase: ExecutionPhase;
   environment: Environment;
   logCollector: LogCollector;
 }) {
   const runFunction = TaskExecutorRegistry[node.data.type];
   if (!runFunction) {
-    console.error("executePhase error runFunction is not exist");
     logCollector.error(`not found executor for ${node.data.type}`);
     return false;
   }

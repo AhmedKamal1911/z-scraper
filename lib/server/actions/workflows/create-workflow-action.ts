@@ -49,7 +49,6 @@ export async function createWorkflowAction(inputs: WorkflowInputs) {
         ...data,
       },
     });
-    // TODO: seprate this create fn
     return { id: result.id };
   } catch (error) {
     if (isPrismaError(error)) {

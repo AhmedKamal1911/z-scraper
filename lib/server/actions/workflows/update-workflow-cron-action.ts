@@ -42,7 +42,6 @@ export async function updateWorkflowCronAction({
       );
     }
     if (isErrorType(error)) {
-      console.log(error);
       throw new Error(error.message);
     }
 

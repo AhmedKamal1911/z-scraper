@@ -46,7 +46,7 @@ export function NodeInput({
           position={Position.Left}
           isConnectable={!isConnected}
           className={cn(
-            "!bg-muted-foreground !-left-0 !border-2 !border-secondary  !size-4 z-10",
+            "bg-muted-foreground! left-0! border-2! border-secondary!  size-4! z-10",
             HandleColor[input.type]
           )}
         />

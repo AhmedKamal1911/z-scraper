@@ -8,7 +8,7 @@ export function createFlowNode(
   return {
     id: crypto.randomUUID(),
     position: position ?? { x: 0, y: 0 },
-    type: "FlowScrapeNode",
+    type: "ZScraperNode",
     dragHandle: ".drag-handler",
     data: {
       type: nodeType,

@@ -1,7 +1,7 @@
 import useExecutionPlan from "@/hooks/use-execution-plan";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
+import { onlineManager, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useEdges, useNodes } from "@xyflow/react";
 
@@ -19,6 +19,8 @@ export default function PublishWorkflowBtn({
   const flowDefinition = JSON.stringify({ nodes, edges });
   const mutation = useMutation({
     mutationFn: publishWorkflowAction,
+    retry: (failureCount) => failureCount < 2,
+    networkMode: "always",
     onSuccess: () => {
       toast.success("Workflow Published Successfully", {
         id: "publish-workflow",
@@ -26,7 +28,6 @@ export default function PublishWorkflowBtn({
     },
     onError: (error) => {
       toast.error(error.message, { id: "publish-workflow" });
-      // TODO: handle the network error here
     },
   });
   return (
@@ -35,6 +36,10 @@ export default function PublishWorkflowBtn({
       className=" capitalize"
       disabled={mutation.isPending}
       onClick={() => {
+        if (!onlineManager.isOnline()) {
+          toast.error("Check network connection", { id: workflowId });
+          return;
+        }
         const { executionPlan, error } = generateWorkflowPlan();
         if (error) {
           const hasMissingInputs = Array.isArray(error.invalidElements);

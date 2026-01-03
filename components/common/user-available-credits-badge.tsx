@@ -13,6 +13,7 @@ export default function UserAvailableCreditsBadge() {
     queryKey: ["user-available-credits"],
     queryFn: getUserAvailableCredits,
     refetchInterval: 30_000,
+    refetchOnWindowFocus: false,
   });
 
   const displayValue = isLoading ? (

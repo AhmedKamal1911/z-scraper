@@ -16,14 +16,14 @@ export default function CredentialsInput({
   inputProps,
   inputValue,
   updateNodeInputValue,
-  disabled,
 }: StringInputFieldProps) {
   const query = useQuery({
     queryKey: ["user-credentials"],
     queryFn: () => getCredentialsForUser(),
     refetchInterval: 10000,
+    refetchOnWindowFocus: false,
   });
-  console.log(query.data);
+
   const id = useId();
   return (
     <div className="flex flex-col gap-1 w-full">

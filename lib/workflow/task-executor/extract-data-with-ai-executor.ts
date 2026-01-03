@@ -60,41 +60,41 @@ Rules:
 
     environment.log.info("Calling OpenAI for data extraction.");
 
-    // const openai = new OpenAI({
-    //   apiKey: decryptedCredentialValue,
-    // });
-    // const res = await openai.chat.completions.create({
-    //   model: "gpt-4o-mini",
-    //   temperature: 0,
-    //   messages: [
-    //     { role: "system", content: systemMessage },
-    //     {
-    //       role: "user",
-    //       content: `Extraction instructions: ${prompt} Raw content:${content}`,
-    //     },
-    //   ],
-    // });
+    const openai = new OpenAI({
+      apiKey: decryptedCredentialValue,
+    });
+    const res = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      temperature: 0,
+      messages: [
+        { role: "system", content: systemMessage },
+        {
+          role: "user",
+          content: `Extraction instructions: ${prompt} Raw content:${content}`,
+        },
+      ],
+    });
 
-    // environment.log.info(
-    //   `AI usage — prompt tokens: ${res.usage?.prompt_tokens}, completion tokens: ${res.usage?.completion_tokens}`
-    // );
+    environment.log.info(
+      `AI usage — prompt tokens: ${res.usage?.prompt_tokens}, completion tokens: ${res.usage?.completion_tokens}`
+    );
 
-    // const result = res.choices[0].message?.content;
+    const result = res.choices[0].message?.content;
 
-    // if (!result) {
-    //   environment.log.error("AI returned an empty extraction result.");
-    //   return false;
-    // }
+    if (!result) {
+      environment.log.error("AI returned an empty extraction result.");
+      return false;
+    }
 
     environment.log.info("AI data extraction completed successfully.");
-    const mockExtractedData = {
-      usernameSelector: "#username",
-      passwordSelector: "#password",
-      loginSelector: "body > div > form > input.btn.btn-primary",
-    };
+    // const mockExtractedData = {
+    //   usernameSelector: "#username",
+    //   passwordSelector: "#password",
+    //   loginSelector: "body > div > form > input.btn.btn-primary",
+    // };
 
-    environment.setOutput("Extracted data", JSON.stringify(mockExtractedData));
-    // environment.setOutput("Extracted data", result);
+    // environment.setOutput("Extracted data", JSON.stringify(mockExtractedData));
+    environment.setOutput("Extracted data", result);
     return true;
   } catch (error) {
     environment.log.error("AI data extraction failed.");

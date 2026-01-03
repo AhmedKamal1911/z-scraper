@@ -1,7 +1,7 @@
 import Logo from "@/components/common/logo";
 import { Loader2 } from "lucide-react";
 
-export default function SetupLoading() {
+export default function Loading() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-background">
       <div className="w-full max-w-md rounded-2xl border border-gray-700 bg-background shadow-xl p-10 flex flex-col items-center gap-8">

@@ -6,7 +6,7 @@ import React from "react";
 export default function NavigationTabs({ workflowId }: { workflowId: string }) {
   const pathname = usePathname();
   const activePath = pathname?.split("/")[3];
-  console.log({ activePath });
+
   return (
     <Tabs
       value={activePath}

@@ -61,7 +61,6 @@ export async function executeWorkflowAction(form: {
         throw new Error("No execution plan generated");
       }
       executionPlan = result.executionPlan;
-      console.log("execution plan server action", executionPlan);
     }
     const execution = await prisma.workflowExecution.create({
       data: {

@@ -1,16 +1,17 @@
 import { getWorkflowExecutions } from "@/lib/server/queries/workflows/get-workflow-executions";
 import WorkflowTopbar from "../../editor/_components/workflow-topbar/workflow-topbar";
 import { Suspense } from "react";
-import { Inbox, LoaderCircle } from "lucide-react";
-import { waitFor } from "@/lib/helper-utils/wait-for";
+import { Inbox } from "lucide-react";
+
 import ExecutionsTable from "./_components/executions-table";
+import Loader from "./_components/loader";
 
 export default async function ExecutionsHistoryPage({
   params,
 }: PageProps<"/dashboard/workflow/editor/[workflowId]">) {
   const { workflowId } = await params;
   return (
-    <div className="min-h-[calc(100vh-70px)] overflow-auto">
+    <div className="min-h-[calc(100vh-70px)]">
       <WorkflowTopbar
         title="all runs"
         subTitle="List of all workflow runs"
@@ -18,14 +19,7 @@ export default async function ExecutionsHistoryPage({
         hideButtons
       />
 
-      <Suspense
-        fallback={
-          <div className="flex flex-col gap-3 h-[calc(100vh-70px)] items-center justify-center stroke-primary capitalize">
-            <LoaderCircle className="animate-spin size-12 text-primary" />
-            loading please wait ..
-          </div>
-        }
-      >
+      <Suspense fallback={<Loader />}>
         <ExecutionsTableWrapper workflowId={workflowId} />
       </Suspense>
     </div>
@@ -33,7 +27,6 @@ export default async function ExecutionsHistoryPage({
 }
 
 async function ExecutionsTableWrapper({ workflowId }: { workflowId: string }) {
-  await waitFor(4000);
   const workflowExecutions = await getWorkflowExecutions(workflowId);
 
   if (!workflowExecutions || workflowExecutions.length === 0) {

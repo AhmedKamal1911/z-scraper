@@ -32,7 +32,7 @@ export default function PeriodSelector({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  console.log(selectedPeriod);
+
   return (
     <Select
       value={`${selectedPeriod.month}-${selectedPeriod.year}`}

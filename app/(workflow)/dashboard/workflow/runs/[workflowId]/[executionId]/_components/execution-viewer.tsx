@@ -1,27 +1,14 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+
 import { getUserWorkflowExecutionWithPhases } from "@/lib/queries/workflow/get-user-workflow-execution-with-phases";
 import { getWorkflowExecution } from "@/lib/server/queries/workflows/get-workflow-execution";
-import {
-  ExecutionPhaseStatus,
-  WorkflowExecutionStatus,
-} from "@/lib/types/workflow";
-import { formatDistanceToNow } from "date-fns";
+import { WorkflowExecutionStatus } from "@/lib/types/workflow";
+
 import { useQuery } from "@tanstack/react-query";
-import {
-  Calendar,
-  CircleDashed,
-  Clock,
-  Coins,
-  DollarSign,
-  GitGraph,
-  Loader,
-  LucideIcon,
-  MousePointerClick,
-} from "lucide-react";
-import React, { ReactNode, useEffect, useState } from "react";
+import { Clock, DollarSign, MousePointerClick } from "lucide-react";
+import { useEffect, useState } from "react";
 import { datesToDurationString } from "@/lib/helper-utils/dates";
 import { getPhasesTotalCost } from "@/lib/helper-utils/get-phases-total-cost";
 import { getWorkflowPhaseDetails } from "@/lib/server/queries/workflows/get-workflow-phase-details";
@@ -43,9 +30,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { LogLevel } from "@/lib/types/log";
-import PhaseStatusBadge from "./phase-status-badge";
-import CountUpWrapper from "@/app/(dashboard)/dashboard/_components/common/count-up-wrapper";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { ExecutionViewerAside } from "./execution-viewer-sidebar";
 
 export type ExecutionWithPhases = Awaited<
   ReturnType<typeof getUserWorkflowExecutionWithPhases>
@@ -60,6 +46,7 @@ export default function ExecutionViewer({ initialData }: Props) {
     queryKey: ["execution", initialData?.id],
     queryFn: async () => getWorkflowExecution(initialData!.id),
     initialData,
+    refetchOnWindowFocus: false,
     refetchInterval: (q) =>
       q.state.data?.status === WorkflowExecutionStatus.RUNNING ? 3000 : false,
   });
@@ -67,6 +54,7 @@ export default function ExecutionViewer({ initialData }: Props) {
   const phaseDetails = useQuery({
     queryKey: ["phaseDetails", selectedPhase, query.data?.status],
     enabled: selectedPhase !== null,
+    refetchOnWindowFocus: false,
     queryFn: () => getWorkflowPhaseDetails(selectedPhase!),
   });
   const duration = datesToDurationString({
@@ -76,174 +64,101 @@ export default function ExecutionViewer({ initialData }: Props) {
   const creditsConsumed = getPhasesTotalCost({
     phases: query.data?.phases || [],
   });
-  console.log({ creditsConsumed });
-  const isRunning = query.data?.status === WorkflowExecutionStatus.RUNNING;
 
+  const isRunning =
+    query.data?.status === WorkflowExecutionStatus.RUNNING ||
+    phaseDetails.isFetching;
+  const isPhaseFetching = phaseDetails.isFetching;
   useEffect(() => {
+    if (selectedPhase !== null) return;
+
     const phases = query.data?.phases ?? [];
     if (phases.length === 0) return;
 
     const key = isRunning ? "startedAt" : "completedAt";
 
     const sorted = phases
-      .filter((p) => p[key]) // شيل phases اللي مفيهاش التاريخ المطلوب
+      .filter((p) => p[key])
       .toSorted((a, b) => (a[key]! > b[key]! ? -1 : 1));
 
     if (sorted.length > 0) {
       setSelectedPhase(sorted[0].id);
     }
-  }, [isRunning, query.data?.phases]);
+  }, [isRunning, query.data?.phases, selectedPhase]);
 
   return (
-    <div className="flex">
-      <ExecutionViewerAside
-        isRunning={isRunning}
-        duration={duration}
-        creditsConsumed={creditsConsumed}
-        selectedPhase={selectedPhase}
-        setSelectedPhase={setSelectedPhase}
-        execution={query.data}
-      />
-      <div className="flex-1 bg-background p-4 border-r border-r-muted">
-        {isRunning ? (
-          <ExecutionRunningLoader />
-        ) : (
-          !selectedPhase && <NoPhaseSelected />
-        )}
-        {!isRunning && selectedPhase && phaseDetails.data && (
-          <div className="container">
-            <div className="flex flex-col gap-2">
-              <div className="flex gap-2">
-                <Badge
-                  variant={"outline"}
-                  className="capitalize gap-3 text-sm sm:text-md h-fit p-2"
-                >
-                  <div className="flex gap-1">
-                    <DollarSign size={20} className="stroke-muted-foreground" />
-                    <span>credits</span>
+    <SidebarProvider>
+      <div className="flex w-full">
+        <ExecutionViewerAside
+          isRunning={isRunning}
+          duration={duration}
+          creditsConsumed={creditsConsumed}
+          selectedPhase={selectedPhase}
+          setSelectedPhase={setSelectedPhase}
+          execution={query.data}
+        />
+        <div className="flex-1 overflow-hidden bg-background p-0 py-3 border-r border-r-muted">
+          {isRunning || isPhaseFetching ? (
+            <ExecutionRunningLoader />
+          ) : (
+            !selectedPhase && !isPhaseFetching && <NoPhaseSelected />
+          )}
+          {!isRunning &&
+            !isPhaseFetching &&
+            selectedPhase &&
+            phaseDetails.data && (
+              <div className="container">
+                <div className="flex flex-col gap-3">
+                  <div className="flex-wrap flex items-center gap-2">
+                    <Badge
+                      variant={"outline"}
+                      className="capitalize gap-3 text-sm sm:text-md h-fit p-2"
+                    >
+                      <div className="flex gap-1">
+                        <DollarSign
+                          size={20}
+                          className="stroke-muted-foreground"
+                        />
+                        <span>credits</span>
+                      </div>
+                      <span>{phaseDetails.data.creditsConsumed}</span>
+                    </Badge>
+                    <Badge
+                      variant={"outline"}
+                      className="capitalize gap-3 text-sm sm:text-md h-fit p-2"
+                    >
+                      <div className="flex gap-1">
+                        <Clock size={20} className="stroke-muted-foreground" />
+                        <span>duration</span>
+                      </div>
+                      <span>{duration}</span>
+                    </Badge>
+                    <SidebarTrigger
+                      variant={"default"}
+                      className="md:hidden"
+                      size={"icon"}
+                    />
                   </div>
-                  <span>{phaseDetails.data.creditsConsumed}</span>
-                </Badge>
-                <Badge
-                  variant={"outline"}
-                  className="capitalize gap-3 text-sm sm:text-md h-fit p-2"
-                >
-                  <div className="flex gap-1">
-                    <Clock size={20} className="stroke-muted-foreground" />
-                    <span>duration</span>
-                  </div>
-                  <span>{duration}</span>
-                </Badge>
+
+                  <ParamsViewer
+                    title="inputs"
+                    subTitle="phase related inputs"
+                    paramsJson={phaseDetails.data.inputs}
+                  />
+                  <ParamsViewer
+                    title="outputs"
+                    subTitle="phase related outputs"
+                    paramsJson={phaseDetails.data.outputs}
+                  />
+                  {phaseDetails.data.executionLogs.length !== 0 && (
+                    <LogsViewer logs={phaseDetails.data.executionLogs} />
+                  )}
+                </div>
               </div>
-
-              <ParamsViewer
-                title="inputs"
-                subTitle="phase related inputs"
-                paramsJson={phaseDetails.data.inputs}
-              />
-              <ParamsViewer
-                title="outputs"
-                subTitle="phase related outputs"
-                paramsJson={phaseDetails.data.outputs}
-              />
-              {phaseDetails.data.executionLogs.length !== 0 && (
-                <LogsViewer logs={phaseDetails.data.executionLogs} />
-              )}
-            </div>
-          </div>
-        )}
+            )}
+        </div>
       </div>
-    </div>
-  );
-}
-
-function ExecutionViewerAside({
-  execution,
-  selectedPhase,
-  setSelectedPhase,
-  isRunning,
-  duration,
-  creditsConsumed,
-}: {
-  execution: ExecutionWithPhases;
-  selectedPhase: string | null;
-  setSelectedPhase: (phaseId: string) => void;
-  isRunning: boolean;
-  duration: string | null;
-  creditsConsumed: number;
-}) {
-  console.log(execution?.status);
-
-  return (
-    <aside className="sticky top-[70px] w-[440px] min-w-[440px] max-w-[440px]  border-r-2 border-separate flex flex-col h-[calc(100vh-70px)] overflow-auto bg-sidebar">
-      <div className="p-3">
-        <ExecutionDetailBox
-          icon={CircleDashed}
-          label="status"
-          value={
-            <div className="flex gap-2 items-center">
-              <PhaseStatusBadge
-                status={execution?.status as ExecutionPhaseStatus}
-              />
-
-              {execution?.status}
-            </div>
-          }
-        />
-        <ExecutionDetailBox
-          icon={Calendar}
-          label="started at"
-          value={
-            <span>
-              {execution?.startedAt
-                ? formatDistanceToNow(new Date(execution.startedAt), {
-                    addSuffix: true,
-                  })
-                : "-"}
-            </span>
-          }
-        />
-
-        <ExecutionDetailBox
-          icon={Clock}
-          label="duration"
-          value={
-            duration ? duration : <Loader className="animate-spin" size={20} />
-          }
-        />
-        <ExecutionDetailBox
-          icon={Coins}
-          label="credits consumed"
-          value={<CountUpWrapper value={creditsConsumed} />}
-        />
-      </div>
-
-      <div className="border-y border-separate p-2 flex items-center justify-center gap-2 capitalize text-muted-foreground text-md font-semibold">
-        <GitGraph />
-        <span>phases</span>
-      </div>
-      <div className="p-3 flex flex-col gap-1">
-        {execution?.phases.map((phase, i) => (
-          <Button
-            className="w-full justify-between text-start h-fit cursor-pointer"
-            variant={selectedPhase === phase.id ? "secondary" : "sidebarItem"}
-            key={i}
-            onClick={() => {
-              if (isRunning) return;
-              setSelectedPhase(phase.id);
-            }}
-          >
-            <div className="flex items-center gap-2">
-              <Badge className="size-7 rounded-sm font-semibold text-lg">
-                {i + 1}
-              </Badge>
-              <p className="flex-1 font-semibold">{phase.name}</p>
-            </div>
-            <PhaseStatusBadge status={phase.status as ExecutionPhaseStatus} />
-          </Button>
-        ))}
-      </div>
-    </aside>
+    </SidebarProvider>
   );
 }
 
@@ -257,32 +172,31 @@ function ParamsViewer({
   paramsJson: string | null;
 }) {
   const inputs = paramsJson ? JSON.parse(paramsJson) : undefined;
+
   return (
-    <Card className="shadow-lg py-0 overflow-hidden gap-2 capitalize">
-      <CardHeader className="rounded-lg rounded-b-none border-b py-4  bg-secondary/30">
-        <CardTitle className=" text-base">{title}</CardTitle>
-        <CardDescription className=" text-sm text-muted-foreground">
+    <Card className="pt-0 shadow-lg overflow-hidden capitalize">
+      <CardHeader className="border-b bg-secondary/30 max-[300px]:p-3 py-4">
+        <CardTitle className="text-base">{title}</CardTitle>
+        <CardDescription className="text-sm text-muted-foreground">
           {subTitle}
         </CardDescription>
       </CardHeader>
-      <CardContent className="py-3">
-        <div className="flex flex-col gap-2">
+
+      <CardContent className="max-[400px]:px-2 py-3">
+        <div className="flex flex-col gap-3">
           {!inputs || Object.keys(inputs).length === 0 ? (
-            <p className="font-semibold">no params in this phase</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              No params in this phase
+            </p>
           ) : (
             Object.entries(inputs).map(([key, value]) => (
               <div
                 key={key}
-                className="flex justify-between items-center space-y-1"
+                className="flex flex-col sm:flex-row sm:items-center gap-2"
               >
-                <p className="text-sm text-muted-foreground flex-1 basis-1/3">
-                  {key}
-                </p>
-                <Input
-                  readOnly
-                  className="flex-1 basis-2/3"
-                  value={value as string}
-                />
+                <p className="text-sm text-muted-foreground sm:w-1/3">{key}</p>
+
+                <Input readOnly className="sm:w-2/3" value={String(value)} />
               </div>
             ))
           )}
@@ -293,68 +207,66 @@ function ParamsViewer({
 }
 function LogsViewer({ logs }: { logs: ExecutionLog[] }) {
   return (
-    <Card className="w-full p-0 capitalize gap-2 overflow-hidden">
-      <CardHeader className="rounded-lg rounded-b-none border-b py-3  bg-secondary/30">
-        <CardTitle className="text-base">logs</CardTitle>
-        <CardDescription className=" text-sm text-muted-foreground">
-          logs related to this phase
+    <Card className="pt-0 w-full flex flex-col shadow-lg overflow-hidden capitalize">
+      <CardHeader className="border-b bg-secondary/30 py-3">
+        <CardTitle className="text-base">Logs</CardTitle>
+        <CardDescription className="text-sm text-muted-foreground">
+          Logs related to this phase
         </CardDescription>
       </CardHeader>
+
       <CardContent className="p-0">
-        <Table>
-          <TableHeader className="text-muted-foreground text-sm">
-            <TableRow>
-              <TableHead>Time</TableHead>
-              <TableHead>Level</TableHead>
-              <TableHead>Message</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {logs.map((log) => (
-              <TableRow key={log.id} className="text-muted-foreground">
-                <TableCell width={190} className="text-xs p-1 pl-2">
-                  {log.timestamp.toISOString()}
-                </TableCell>
-                <TableCell
-                  width={80}
-                  className={cn(
-                    "uppercase text-xs font-bold p-1 pl-2",
-                    (log.logLevel as LogLevel) === "error" &&
-                      "text-destructive",
-                    (log.logLevel as LogLevel) === "info" && "text-primary"
-                  )}
-                >
-                  {log.logLevel}
-                </TableCell>
-                <TableCell className="text-sm flex-1 p-1 pl-2  text-ellipsis whitespace-break-spaces">
-                  {log.message}
-                </TableCell>
+        <div className="overflow-x-auto">
+          <Table className="whitespace-nowrap min-w-[650px]">
+            <TableHeader className="sticky top-0 z-10 bg-muted/50 backdrop-blur text-muted-foreground text-sm">
+              <TableRow>
+                <TableHead className="w-[190px]">Time</TableHead>
+                <TableHead className="w-20">Level</TableHead>
+                <TableHead>Message</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+
+            <TableBody>
+              {logs.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={3}
+                    className="text-center py-4 text-muted-foreground"
+                  >
+                    No logs available
+                  </TableCell>
+                </TableRow>
+              ) : (
+                logs.map((log) => (
+                  <TableRow
+                    key={log.id}
+                    className="text-muted-foreground hover:bg-muted/10 transition"
+                  >
+                    <TableCell className="text-xs p-1 pl-2">
+                      {log.timestamp.toISOString()}
+                    </TableCell>
+
+                    <TableCell
+                      className={cn(
+                        "uppercase text-xs font-bold p-1 pl-2",
+                        log.logLevel === "error" && "text-destructive",
+                        log.logLevel === "info" && "text-primary"
+                      )}
+                    >
+                      {log.logLevel}
+                    </TableCell>
+
+                    <TableCell className="text-sm p-1 pl-2 max-w-[600px] whitespace-normal">
+                      {log.message}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
-  );
-}
-function ExecutionDetailBox({
-  value,
-  icon,
-  label,
-}: {
-  icon: LucideIcon;
-  label: string;
-  value: ReactNode;
-}) {
-  const Icon = icon;
-  return (
-    <div className="flex justify-between items-center text-sm px-2 py-3">
-      <div className=" flex items-center gap-2 capitalize">
-        <Icon size={20} className="stroke-muted-foreground/80" />
-        <span>{label}</span>
-      </div>
-      <div className="font-semibold capitalize">{value}</div>
-    </div>
   );
 }
 

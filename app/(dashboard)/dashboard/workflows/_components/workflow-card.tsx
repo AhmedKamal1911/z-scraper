@@ -16,14 +16,14 @@ import {
 import Link from "next/link";
 import WorkflowOptions from "./workflow-options";
 import RunWorkflowBtn from "./run-workflow-btn";
-import SchedulerDialog from "./scheduler-dialog";
+import SchedulerDialog from "./dialogs/scheduler-dialog";
 import TooltipWrapper from "@/components/common/tooltip-wrapper";
 import { cn } from "@/lib/utils";
 import { format, formatDistanceToNow } from "date-fns";
 import ExecutionStatusIndicator, {
   ExecutionStatusLabel,
 } from "@/app/(workflow)/dashboard/workflow/runs/[workflowId]/_components/execution-status-indicator";
-import DuplicateWorkflowDialog from "./duplicate-workflow-dialog";
+import { DesktopDuplicateWorkflowDialog } from "./dialogs/desktop-duplicate-workflow-dialog";
 
 type Props = {
   workflow: Workflow;
@@ -91,7 +91,7 @@ export default function WorkflowCard({ workflow }: Props) {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2 max-[890px]:hidden">
+          <div className="flex items-center gap-2 max-[960px]:hidden">
             {!isDraft && <RunWorkflowBtn workflowId={workflow.id} />}
 
             <Link
@@ -104,7 +104,7 @@ export default function WorkflowCard({ workflow }: Props) {
               <ShuffleIcon size={16} />
               edit
             </Link>
-            <DuplicateWorkflowDialog workflowId={workflow.id} />
+            <DesktopDuplicateWorkflowDialog workflowId={workflow.id} />
           </div>
           <WorkflowOptions workflow={workflow} />
         </div>
@@ -113,7 +113,6 @@ export default function WorkflowCard({ workflow }: Props) {
     </Card>
   );
 }
-
 function ScheduleSection({
   creditsConsumption,
   cron,

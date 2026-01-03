@@ -16,11 +16,11 @@ export async function unpublishWorkflowAction({
 }: {
   workflowId: string;
 }) {
-  const workflow = await getUserWorkflowUsecase(workflowId);
-
-  if (!workflow)
-    throw new Error("Workflow you are trying to unpublish is not found!");
   try {
+    const workflow = await getUserWorkflowUsecase(workflowId);
+
+    if (!workflow)
+      throw new Error("Workflow you are trying to unpublish is not found!");
     if (workflow.status === WorkflowStatus.DRAFT) {
       throw new Error("Only published workflows can be unpublished.");
     }

@@ -11,7 +11,6 @@ export default function PhaseStatusBadge({
 }: {
   status: ExecutionPhaseStatus;
 }) {
-  console.log({ status });
   switch (status) {
     case ExecutionPhaseStatus.PENDING:
       return <CircleDashedIcon className="stroke-muted-foreground size-5" />;
