@@ -4,7 +4,12 @@ import PageHeader from "../_components/common/page-header";
 import UserWorkflowsSkeleton from "./_components/user-workflows-skeleton";
 import UserWorkflows from "./_components/user-workflows";
 import CreateWorkflowDialog from "./_components/dialogs/create-workflow-dialog";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Workflows",
+  description: "Create, manage, and monitor your workflows in one place.",
+};
 export default function WorkFlowsPage() {
   return (
     <div className="flex flex-col h-full">

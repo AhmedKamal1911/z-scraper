@@ -5,7 +5,27 @@ import { Inbox } from "lucide-react";
 
 import ExecutionsTable from "./_components/executions-table";
 import Loader from "./_components/loader";
+import { Metadata } from "next";
+import { getUserWorkflowUsecase } from "@/lib/dal";
 
+export async function generateMetadata({
+  params,
+}: PageProps<"/dashboard/workflow/editor/[workflowId]">): Promise<Metadata> {
+  const { workflowId } = await params;
+  const workflow = await getUserWorkflowUsecase(workflowId);
+
+  if (!workflow) {
+    return {
+      title: "Workflow Not Found",
+      description: "The requested workflow does not exist.",
+    };
+  }
+
+  return {
+    title: `${workflow.name} · Runs`,
+    description: `View all executions and runs for workflow "${workflow.name}".`,
+  };
+}
 export default async function ExecutionsHistoryPage({
   params,
 }: PageProps<"/dashboard/workflow/editor/[workflowId]">) {

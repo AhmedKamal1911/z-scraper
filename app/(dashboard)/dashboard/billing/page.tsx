@@ -6,7 +6,13 @@ import CreditsPackages from "./_components/credits-packages";
 import { BalanceCard } from "./_components/balance-card";
 import { CreditsUsageCard } from "./_components/credits-usage-card";
 import { TransactionsHistoryCard } from "./_components/transactions-history-card";
+import { Metadata } from "next";
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: "Billing",
+  description:
+    "Manage your billing details, view your credit balance, track usage, and review transaction history.",
+};
 export default function BillingPage() {
   return (
     <div className="flex flex-col gap-5">

@@ -13,8 +13,15 @@ import ExecutionStatusChart from "./_components/charts/execution-status-chart";
 
 import { getPeriodCreditsUsage } from "@/lib/server/queries/analytics/get-period-credits-usage";
 import CreditsUsageChart from "../billing/_components/credits-usage-chart";
+import { Metadata } from "next";
 type Props = {
   searchParams: Promise<{ month?: string; year?: string }>;
+};
+
+export const metadata: Metadata = {
+  title: "Home",
+  description:
+    "Overview of your workflow activity, execution status, and credit usage for the selected period.",
 };
 export default async function HomePage({ searchParams }: Props) {
   const { month, year } = await searchParams;

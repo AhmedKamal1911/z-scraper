@@ -7,7 +7,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import CreateCredentialDialog from "./_components/create-credential-dialog";
 
 import { UserCredentials } from "./_components/user-credentials";
+import { Metadata } from "next";
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: "Credentials",
+  description:
+    "Manage and secure your credentials with encrypted storage and controlled access.",
+};
 export default async function CredentialsPage() {
   return (
     <div className="flex flex-col h-full gap-6">
