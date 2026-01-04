@@ -1,11 +1,11 @@
 import { handleCheckoutSessionCompleted } from "@/lib/stripe/handle-checkout-session-completed";
 import { stripe } from "@/lib/stripe/stripe";
-import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
-  const signature: string = (await headers()).get("stripe-signature")!;
+  const signature = request.headers.get("stripe-signature")!;
+  console.log("sign", signature);
   try {
     const event = stripe.webhooks.constructEvent(
       body,
