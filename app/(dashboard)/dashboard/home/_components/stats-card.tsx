@@ -10,7 +10,7 @@ type Props = {
 export default function StatsCard({ icon, title, value }: Props) {
   const StatIcon = icon;
   return (
-    <Card className="relative overflow-hidden gap-2">
+    <Card className="relative overflow-hidden gap-2 min-h-[126px]">
       <CardHeader>
         <CardTitle className="capitalize text-xl">{title}</CardTitle>
         <StatIcon
