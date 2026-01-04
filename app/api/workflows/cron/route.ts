@@ -25,7 +25,7 @@ export async function GET() {
 }
 
 function triggerWorkflowSafely(workflowId: string) {
-  const url = getPublicUrl(`/api/workflows/execute?workflowId=${workflowId}`);
+  const url = getPublicUrl(`api/workflows/execute?workflowId=${workflowId}`);
 
   fetch(url, {
     headers: {

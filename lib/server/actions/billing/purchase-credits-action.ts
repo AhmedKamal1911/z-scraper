@@ -22,8 +22,8 @@ export async function purchaseCreditsAction(pkgId: PackageId): Promise<string> {
       invoice_creation: {
         enabled: true,
       },
-      success_url: getPublicUrl("/dashboard/billing"),
-      cancel_url: getPublicUrl("/dashboard/billing"),
+      success_url: getPublicUrl("dashboard/billing"),
+      cancel_url: getPublicUrl("dashboard/billing"),
       metadata: {
         userId: session.userId,
         pkgId,
