@@ -26,17 +26,23 @@ export async function GET(req: NextRequest) {
   try {
     const authHeader = req.headers.get("authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.log(
+        "MISSING OR INVALID AUTHORIZATION HEADER @EXECUTE ROUTE",
+        authHeader
+      );
       return NextResponse.json(
         { error: "Missing or invalid authorization header" },
         { status: 401 }
       );
     }
     if (authHeader !== `Bearer ${process.env.TRIGGER_WORKFLOW_KEY_SECRET}`) {
+      console.log("UNAUTHORIZED USER @EXECUTE ROUTE", authHeader);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const secret = authHeader.split(" ")[1];
     if (!isValidSecret(secret)) {
+      console.log("INVALID SECRET TOKEN @EXECUTE ROUTE", secret);
       return NextResponse.json(
         { error: "Invalid secret token" },
         { status: 401 }
@@ -45,6 +51,7 @@ export async function GET(req: NextRequest) {
 
     const workflowId = req.nextUrl.searchParams.get("workflowId");
     if (!workflowId) {
+      console.log("Missing workflowId @EXECUTE ROUTE", workflowId);
       return NextResponse.json(
         { error: "Missing workflowId parameter" },
         { status: 400 }
@@ -55,6 +62,7 @@ export async function GET(req: NextRequest) {
       where: { id: workflowId },
     });
     if (!workflow) {
+      console.log("Workflow not found @EXECUTE ROUTE");
       return NextResponse.json(
         { error: "Workflow not found" },
         { status: 404 }
@@ -62,6 +70,7 @@ export async function GET(req: NextRequest) {
     }
 
     if (!workflow.executionPlan) {
+      console.log("Workflow has no execution plan@EXECUTE ROUTE");
       return NextResponse.json(
         { error: "Workflow has no execution plan" },
         { status: 400 }

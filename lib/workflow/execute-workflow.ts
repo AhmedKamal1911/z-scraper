@@ -11,9 +11,13 @@ import { ExecutionPhase } from "@prisma/client";
 import { FlowNode } from "../types/flowNode";
 import { TaskRegistry } from "./task/task-registry";
 import { TaskExecutorRegistry } from "./task-executor/executor-registry";
-import { Environment, ExecutionEnv } from "../types/executor";
+import {
+  Environment,
+  ExecutionEnv,
+  PuppeteerBrowser,
+  PuppeteerPage,
+} from "../types/executor";
 import { NodeTaskInputType } from "../types/nodeTask";
-import { Browser, Page } from "puppeteer";
 import { Edge } from "@xyflow/react";
 import { LogCollector } from "../types/log";
 import { createLogCollector } from "../execution-logger";
@@ -290,8 +294,8 @@ function createExecutionEnvironment({
     setOutput: (name: string, value: string) =>
       (environment.phases[node.id].outputs[name] = value),
     getBrowser: () => environment.browser,
-    setBrowser: (browser: Browser) => (environment.browser = browser),
-    setPage: (page: Page) => (environment.page = page),
+    setBrowser: (browser: PuppeteerBrowser) => (environment.browser = browser),
+    setPage: (page: PuppeteerPage) => (environment.page = page),
     getPage: () => environment.page,
     log: logCollector,
   };

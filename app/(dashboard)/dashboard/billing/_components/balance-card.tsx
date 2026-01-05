@@ -6,7 +6,7 @@ import { Coins } from "lucide-react";
 export async function BalanceCard() {
   const userBalance = await getUserAvailableCredits();
   return (
-    <Card className="gap-2 bg-linear-to-br from-primary/10 via-primary/5 to-background border-primary/20 shadow-lg flex justify-between flex-col overflow-hidden">
+    <Card className="gap-2 bg-linear-to-br from-primary/10 via-primary/5 to-background border-primary/20 shadow-lg flex justify-between flex-col overflow-hidden min-h-[186px]">
       <CardContent className="p-4 relative items-center">
         <div className="flex justify-between items-center">
           <div>

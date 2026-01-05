@@ -17,7 +17,7 @@ export default function BillingPage() {
   return (
     <div className="flex flex-col gap-5">
       <PageHeader title="Billing" />
-      <Suspense fallback={<Skeleton className="h-[166px] w-full" />}>
+      <Suspense fallback={<Skeleton className="h-[186px] w-full" />}>
         <BalanceCard />
       </Suspense>
       <CreditsPackages />

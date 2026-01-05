@@ -6,22 +6,27 @@ import { ClerkProvider } from "@clerk/nextjs";
 
 import { Toaster } from "@/components/ui/sonner";
 import AppProviders from "@/components/providers/AppProviders";
+import { getPublicUrl } from "@/lib/helper-utils/get-public-url";
 
 const abeezee = ABeeZee({
   variable: "--font-abeezee",
   weight: ["400"],
   subsets: ["latin"],
 });
-
 export const metadata: Metadata = {
-  metadataBase: new URL("http://localhost:3000"),
+  metadataBase: new URL(getPublicUrl()),
   title: "ZScraper",
   description: "Web scraping tool to extract and manage data efficiently",
   icons: {
-    icon: "/camera-lens.png",
-    shortcut: "/camera-lens.png",
-    apple: "/camera-lens.png",
+    icon: [
+      { url: "/favicon-lens.ico" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
   },
+  manifest: "/site.webmanifest",
+
   openGraph: {
     title: "ZScraper",
     description: "Extract and manage data from any website efficiently",

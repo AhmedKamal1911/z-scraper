@@ -1,6 +1,6 @@
-import { ExecutionEnv } from "@/lib/types/executor";
+import { ExecutionEnv, PuppeteerPage } from "@/lib/types/executor";
 import { ScrollToElementTask } from "../task/scroll-to-element-task";
-
+import { Page as CorePage } from "puppeteer-core";
 export async function ScrollToElementExecutor(
   environment: ExecutionEnv<typeof ScrollToElementTask>
 ): Promise<boolean> {
@@ -11,17 +11,15 @@ export async function ScrollToElementExecutor(
       return false;
     }
 
-    const page = environment.getPage();
+    const page = environment.getPage() as PuppeteerPage;
     if (!page) {
       environment.log.error("Page instance is not available.");
       return false;
     }
     environment.log.info(`Scrolling to element by using selector: ${selector}`);
-    await page.evaluate((selector) => {
+    await (page as CorePage).evaluate((selector: string) => {
       const element = document.querySelector(selector);
-      if (!element) {
-        throw new Error("Element not found");
-      }
+      if (!element) throw new Error("Element not found");
       const elementTop = element.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({ top: elementTop });
     }, selector);

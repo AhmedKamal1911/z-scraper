@@ -5,16 +5,17 @@ const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
 });
 
-const globalForPrisma = global as unknown as {
-  prisma: PrismaClient;
-};
+declare global {
+  var prisma: PrismaClient | undefined;
+}
 
-const prisma =
-  globalForPrisma.prisma ||
+export const prisma =
+  global.prisma ??
   new PrismaClient({
     adapter,
+    log: ["query", "info", "warn", "error"],
   });
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== "production") global.prisma = prisma;
 
 export default prisma;
