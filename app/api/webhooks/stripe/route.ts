@@ -15,10 +15,12 @@ export async function POST(request: NextRequest) {
 
     switch (event.type) {
       case "checkout.session.completed":
+        console.log("stripe event completed", event.type);
         handleCheckoutSessionCompleted(event.data.object);
         break;
 
       default:
+        console.log("stripe event default", event.type);
         break;
     }
 

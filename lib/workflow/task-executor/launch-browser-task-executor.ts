@@ -19,6 +19,7 @@ export async function LanuchBrowserExecutor(
       ? puppeteerBrowser.launch({ headless: true }) // Local Puppeteer
       : puppeteer.launch({
           // Serverless Puppeteer-core + Chromium
+          timeout: 40_000,
           args: chromium.args,
           executablePath: executablePath,
           headless: true,
