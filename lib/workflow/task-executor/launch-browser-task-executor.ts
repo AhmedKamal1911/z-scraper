@@ -3,6 +3,8 @@ import chromium from "@sparticuz/chromium";
 import { ExecutionEnv } from "@/lib/types/executor";
 import { LaunchBrowserTask } from "../task/launch-browser-task";
 import puppeteerBrowser from "puppeteer";
+const REMOTE_PATH =
+  "https://github.com/Sparticuz/chromium/releases/download/v143.0.4/chromium-v143.0.4-pack.x64.tar";
 
 export async function LanuchBrowserExecutor(
   environment: ExecutionEnv<typeof LaunchBrowserTask>
@@ -10,7 +12,9 @@ export async function LanuchBrowserExecutor(
   try {
     const websiteUrl = environment.getInput("Website Url");
 
-    const executablePath = await chromium.executablePath();
+    if (!REMOTE_PATH) {
+      throw new Error("Missing a path for Chromium executable");
+    }
     const isWindows = process.platform === "win32";
     const isLocal = process.env.NODE_ENV !== "production" || isWindows;
     environment.log.info(`Environment isLocal: ${isLocal}`);
@@ -19,9 +23,13 @@ export async function LanuchBrowserExecutor(
       ? puppeteerBrowser.launch({ headless: true }) // Local Puppeteer
       : puppeteer.launch({
           // Serverless Puppeteer-core + Chromium
-          timeout: 40_000,
-          args: chromium.args,
-          executablePath: executablePath,
+          timeout: 60_000,
+          args: [
+            ...chromium.args,
+            "--hide-scrollbars",
+            "--disable-web-security",
+          ],
+          executablePath: await chromium.executablePath(REMOTE_PATH),
           headless: true,
         }));
     environment.setBrowser(browser);
